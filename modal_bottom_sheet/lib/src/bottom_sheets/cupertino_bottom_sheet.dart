@@ -438,6 +438,7 @@ class CupertinoScaffold extends StatefulWidget {
     Curve? previousRouteAnimationCurve,
     Color? backgroundColor,
     Color? barrierColor,
+    Radius topRadius = _kDefaultTopRadius,
     bool expand = false,
     bool useRootNavigator = false,
     bool bounce = true,
@@ -459,7 +460,7 @@ class CupertinoScaffold extends StatefulWidget {
       assert(debugCheckHasMaterialLocalizations(context));
       barrierLabel = MaterialLocalizations.of(context).modalBarrierDismissLabel;
     }
-    final topRadius = CupertinoScaffold.of(context)!.topRadius;
+    // final topRadius = CupertinoScaffold.of(context)!.topRadius;
     final transitionBackgroundColor =
         CupertinoScaffold.of(context)!.transitionBackgroundColor;
     final overlayStyle = overlayStyleFromColor(transitionBackgroundColor);
@@ -471,7 +472,7 @@ class CupertinoScaffold extends StatefulWidget {
       containerBuilder: (context, _, child) => _CupertinoBottomSheetContainer(
         child: child,
         backgroundColor: backgroundColor,
-        topRadius: topRadius ?? _kDefaultTopRadius,
+        topRadius: topRadius,
         shadow: shadow,
         overlayStyle: overlayStyle,
       ),
