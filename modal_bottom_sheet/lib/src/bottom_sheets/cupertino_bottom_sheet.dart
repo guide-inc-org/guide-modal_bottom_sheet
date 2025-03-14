@@ -49,6 +49,7 @@ class _CupertinoBottomSheetContainer extends StatelessWidget {
   final Radius topRadius;
   final BoxShadow? shadow;
   final SystemUiOverlayStyle? overlayStyle;
+  final double? topMargin;
 
   const _CupertinoBottomSheetContainer({
     required this.child,
@@ -56,13 +57,14 @@ class _CupertinoBottomSheetContainer extends StatelessWidget {
     required this.topRadius,
     this.overlayStyle,
     this.shadow,
+    this.topMargin,
   });
 
   @override
   Widget build(BuildContext context) {
     final scopedOverlayStyle = overlayStyle;
     final topSafeAreaPadding = MediaQuery.of(context).padding.top;
-    final topPadding = _kPreviousPageVisibleOffset + topSafeAreaPadding;
+    final topPadding = (topMargin ?? _kPreviousPageVisibleOffset) + topSafeAreaPadding;
 
     final shadow = this.shadow ?? _kDefaultBoxShadow;
     BoxShadow(blurRadius: 10, color: Colors.black12, spreadRadius: 5);
@@ -120,6 +122,7 @@ Future<T?> showCupertinoModalBottomSheet<T>({
   BoxShadow? shadow,
   SystemUiOverlayStyle? overlayStyle,
   double? closeProgressThreshold,
+  double? topMargin,
 }) async {
   assert(debugCheckHasMediaQuery(context));
   final hasMaterialLocalizations =
@@ -138,6 +141,7 @@ Future<T?> showCupertinoModalBottomSheet<T>({
               topRadius: topRadius,
               shadow: shadow,
               overlayStyle: overlayStyle,
+              topMargin: topMargin,
             ),
         secondAnimationController: secondAnimation,
         expanded: expand,
@@ -156,7 +160,8 @@ Future<T?> showCupertinoModalBottomSheet<T>({
         duration: duration,
         settings: settings,
         transitionBackgroundColor: transitionBackgroundColor ?? Colors.black,
-        overlayStyle: overlayStyle),
+        overlayStyle: overlayStyle,
+        topMargin: topMargin),
   );
   return result;
 }
@@ -175,6 +180,8 @@ class CupertinoModalBottomSheetRoute<T> extends ModalSheetRoute<T> {
     'Will be ignored. OverlayStyle is computed from luminance of transitionBackgroundColor',
   )
   final SystemUiOverlayStyle? overlayStyle;
+
+  final double? topMargin;
 
   CupertinoModalBottomSheetRoute({
     required super.builder,
@@ -199,6 +206,7 @@ class CupertinoModalBottomSheetRoute<T> extends ModalSheetRoute<T> {
     this.topRadius = _kDefaultTopRadius,
     this.previousRouteAnimationCurve,
     this.overlayStyle,
+    this.topMargin,
   });
 
   @override
@@ -209,7 +217,7 @@ class CupertinoModalBottomSheetRoute<T> extends ModalSheetRoute<T> {
     Widget child,
   ) {
     final paddingTop = MediaQuery.of(context).padding.top;
-    final distanceWithScale = (paddingTop + _kPreviousPageVisibleOffset) * 0.9;
+    final distanceWithScale = (paddingTop + (topMargin ?? _kPreviousPageVisibleOffset)) * 0.9;
     final offsetY = secondaryAnimation.value * (paddingTop - distanceWithScale);
     final scale = 1 - secondaryAnimation.value / 10;
     return AnimatedBuilder(
@@ -451,6 +459,7 @@ class CupertinoScaffold extends StatefulWidget {
       'Will be ignored. OverlayStyle is computed from luminance of transitionBackgroundColor',
     )
     SystemUiOverlayStyle? overlayStyle,
+    double? topMargin,
   }) async {
     assert(debugCheckHasMediaQuery(context));
     final isCupertinoApp =
@@ -475,6 +484,7 @@ class CupertinoScaffold extends StatefulWidget {
         topRadius: topRadius,
         shadow: shadow,
         overlayStyle: overlayStyle,
+        topMargin: topMargin,
       ),
       expanded: expand,
       barrierLabel: barrierLabel,
@@ -487,6 +497,7 @@ class CupertinoScaffold extends StatefulWidget {
       previousRouteAnimationCurve: previousRouteAnimationCurve,
       duration: duration,
       settings: settings,
+      topMargin: topMargin,
     ));
     return result;
   }
