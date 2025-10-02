@@ -89,12 +89,12 @@ class _CupertinoBottomSheetContainer extends StatelessWidget {
         ),
       ),
     );
-    if (scopedOverlayStyle != null) {
-      bottomSheetContainer = AnnotatedRegion<SystemUiOverlayStyle>(
-        value: scopedOverlayStyle,
-        child: bottomSheetContainer,
-      );
-    }
+    // if (scopedOverlayStyle != null) {
+    //   bottomSheetContainer = AnnotatedRegion<SystemUiOverlayStyle>(
+    //     value: scopedOverlayStyle,
+    //     child: bottomSheetContainer,
+    //   );
+    // }
     return bottomSheetContainer;
   }
 }
@@ -277,53 +277,47 @@ class _CupertinoModalTransition extends StatelessWidget {
       curve: animationCurve ?? Curves.easeOut,
     );
 
-    return AnnotatedRegion(
-      // Make sure to match the system UI overlay style to the background color
-      // we insert below. Since all other content is pushed down, the background
-      // color will always be the one visible behind the status bar.
-      value: overlayStyleFromColor(backgroundColor),
-      child: Stack(
-        children: [
-          Positioned.fill(child: ColoredBox(color: backgroundColor)),
-          AnimatedBuilder(
-            animation: curvedAnimation,
-            child: CupertinoUserInterfaceLevel(
-              data: CupertinoUserInterfaceLevelData.base,
-              child: body,
-            ),
-            builder: (context, child) {
-              final progress = curvedAnimation.value;
-              final yOffset = progress * paddingTop;
-              final scale = 1 - progress / 10;
-              final radius = progress == 0
-                  ? 0.0
-                  : (1 - progress) * startRoundCorner + progress * topRadius.x;
-              return Transform.translate(
-                offset: Offset(0, yOffset),
-                child: Transform.scale(
-                  scale: scale,
-                  alignment: Alignment.topCenter,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(radius),
-                    child: CupertinoUserInterfaceLevel(
-                      data: CupertinoUserInterfaceLevelData.elevated,
-                      child: Builder(
-                        builder: (context) => CupertinoTheme(
-                          data: createPreviousRouteTheme(
-                            context,
-                            curvedAnimation,
-                          ),
-                          child: child!,
+    return Stack(
+      children: [
+        Positioned.fill(child: ColoredBox(color: backgroundColor)),
+        AnimatedBuilder(
+          animation: curvedAnimation,
+          child: CupertinoUserInterfaceLevel(
+            data: CupertinoUserInterfaceLevelData.base,
+            child: body,
+          ),
+          builder: (context, child) {
+            final progress = curvedAnimation.value;
+            final yOffset = progress * paddingTop;
+            final scale = 1 - progress / 10;
+            final radius = progress == 0
+                ? 0.0
+                : (1 - progress) * startRoundCorner + progress * topRadius.x;
+            return Transform.translate(
+              offset: Offset(0, yOffset),
+              child: Transform.scale(
+                scale: scale,
+                alignment: Alignment.topCenter,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(radius),
+                  child: CupertinoUserInterfaceLevel(
+                    data: CupertinoUserInterfaceLevelData.elevated,
+                    child: Builder(
+                      builder: (context) => CupertinoTheme(
+                        data: createPreviousRouteTheme(
+                          context,
+                          curvedAnimation,
                         ),
+                        child: child!,
                       ),
                     ),
                   ),
                 ),
-              );
-            },
-          ),
-        ],
-      ),
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 
@@ -472,7 +466,7 @@ class CupertinoScaffold extends StatefulWidget {
     // final topRadius = CupertinoScaffold.of(context)!.topRadius;
     final transitionBackgroundColor =
         CupertinoScaffold.of(context)!.transitionBackgroundColor;
-    final overlayStyle = overlayStyleFromColor(transitionBackgroundColor);
+    overlayStyle ??= overlayStyleFromColor(transitionBackgroundColor);
     final result = await Navigator.of(context, rootNavigator: useRootNavigator)
         .push(CupertinoModalBottomSheetRoute<T>(
       closeProgressThreshold: closeProgressThreshold,
